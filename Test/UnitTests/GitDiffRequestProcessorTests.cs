@@ -17,7 +17,7 @@ public class GitDiffRequestProcessorTests
     public GitDiffRequestProcessorTests()
     {
         _openAiService = Substitute.For<IOpenAIService>();
-        _openAiService.GetAnswer(Arg.Any<string>(), Arg.Any<string>()).Returns(CorrectCommitMessage);
+        _openAiService.GetAnswerAsync(Arg.Any<string>()).Returns(CorrectCommitMessage);
         var contextConfiguration = Substitute.For<IGitDiffRequestContextConfiguration>();
         contextConfiguration.GetContext().Returns(CorrectContext);
 
@@ -25,11 +25,27 @@ public class GitDiffRequestProcessorTests
     }
 
     [Fact]
-    public void Process_GivenValidGitDiffRequest_ReturnsCorrectCommitMessage()
+    public async Task Process_GivenValidGitDiffRequest_ReturnsCorrectCommitMessage()
     {
-        var result = _sut.GetCommitMessage("some correct diff");
+        // Act
+        var result = await _sut.GetCommitMessageAsync("some correct diff");
 
-        _openAiService.Received(1).GetAnswer(Arg.Any<string>(), Arg.Any<string>());
+        // Assert
+        _ = await _openAiService.Received(1).GetAnswerAsync(Arg.Any<string>());
         result.ShouldBe(CorrectCommitMessage);
+    }
+
+    [Fact]
+    public async Task Process_ShouldCallOpenAiServiceWithCorrectPrompt()
+    {
+        // Arrange
+        const string diff = "some correct diff";
+        var expectedPrompt = $"{CorrectContext} {diff} Answer:";
+
+        // Act
+        _ = await _sut.GetCommitMessageAsync(diff);
+
+        // Assert
+        _ = await _openAiService.Received(1).GetAnswerAsync(expectedPrompt);
     }
 }

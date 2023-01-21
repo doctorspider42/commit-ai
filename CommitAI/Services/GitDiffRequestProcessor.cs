@@ -13,10 +13,12 @@ public class GitDiffRequestProcessor
         _openAiService = openAiService;
     }
 
-    public string GetCommitMessage(string diff)
+    public async Task<string> GetCommitMessageAsync(string diff)
     {
         var context = _contextConfiguration.GetContext();
-        var answer = _openAiService.GetAnswer(diff, context);
+        var prompt = $"{context} {diff} Answer:";
+
+        var answer = await _openAiService.GetAnswerAsync(prompt);
         return answer;
     }
 }

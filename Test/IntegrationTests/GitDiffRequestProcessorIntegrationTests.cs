@@ -1,23 +1,30 @@
 using CommitAI.OpenAi;
 using CommitAI.Services;
 
+using Microsoft.Extensions.Configuration;
+
 using Shouldly;
 
 namespace IntegrationTests;
 
 public class GitDiffRequestProcessorIntegrationTests
 {
-    private GitDiffRequestProcessor _sut;
+    private readonly GitDiffRequestProcessor _sut;
 
     public GitDiffRequestProcessorIntegrationTests()
     {
-        _sut = new GitDiffRequestProcessor(new GitDiffRequestContextConfiguration(), new OpenAiService());
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: true)
+            .AddUserSecrets<GitDiffRequestProcessorIntegrationTests>()
+            .Build();
+        var openApiConfiguration = new OpenApiConfiguration(configuration["OpenAi:ApiKey"]);
+        _sut = new GitDiffRequestProcessor(new GitDiffRequestContextConfiguration(), new OpenAiService(openApiConfiguration, new HttpClient()));
     }
 
     [Fact]
-    public void GetCommitMessage_ShouldReturnMessageInCorrectFormat()
+    public async Task GetCommitMessage_ShouldReturnMessageInCorrectFormat()
     {
-        var actualCommitMessage = _sut.GetCommitMessage(SampleDiff);
+        var actualCommitMessage = await _sut.GetCommitMessageAsync(SampleDiff);
         actualCommitMessage.ShouldStartWith("UPDATE:");
     }
 
