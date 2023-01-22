@@ -17,7 +17,7 @@ public class GitDiffRequestProcessor
     {
         var cutDiff = diff.Length > 7500 ? diff[..7500] : diff;
         var context = _contextConfiguration.GetContext();
-        var prompt = $"{context} {cutDiff} Answer: ";
+        var prompt = $"{cutDiff} {context}:";
 
         var answer = await _openAiService.GetAnswerAsync(prompt);
         return answer;
