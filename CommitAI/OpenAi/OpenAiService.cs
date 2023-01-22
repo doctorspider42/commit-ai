@@ -44,7 +44,7 @@ public class OpenAiService : IOpenAIService
 
         var resultText = responseObject?.Choices[0].Text ?? string.Empty;
 
-        resultText = resultText.Replace("\r", string.Empty).Replace("\n", string.Empty);
+        resultText = resultText.Replace("\r", string.Empty).Replace("\n", string.Empty).Trim();
 
         return resultText;
     }

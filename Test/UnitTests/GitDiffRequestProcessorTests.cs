@@ -40,7 +40,7 @@ public class GitDiffRequestProcessorTests
     {
         // Arrange
         const string diff = "some correct diff";
-        var expectedPrompt = $"{CorrectContext} {diff} Answer:";
+        var expectedPrompt = $"{CorrectContext} {diff} Answer: ";
 
         // Act
         _ = await _sut.GetCommitMessageAsync(diff);

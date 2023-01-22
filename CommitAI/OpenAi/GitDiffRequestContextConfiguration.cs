@@ -2,8 +2,13 @@
 
 public class GitDiffRequestContextConfiguration : IGitDiffRequestContextConfiguration
 {
+    private const string Context = "Give short, compressed git description for changes. "
+                                   + "Always use imperative form (example: ADD newfile.cs, UPDATE: examplemethod, UPDATE: rename oldmethod to newmethod). "
+                                   + "FORMAT: \"ADD: (what will be added in which file). "
+                                   + "UPDATE: (what will be UPDATED in which file). DELETE: (what will be deleted)\"";
+
     public string GetContext()
     {
-        return "Give short, compressed git description for changes. Always use imperative form. Example: \"ADD: add TestUser.cs, Add GetAll() in MonitorService.cs. UPDATE: rename User to UserModel.cs\" FORMAT: FORMAT: ADD: (what will be added in which files). UPDATE: (what will be UPDATED in which files). DELETE: (what will be deleted). Omit not important\r\n";
+        return Context;
     }
 }
